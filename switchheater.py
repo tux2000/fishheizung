@@ -39,7 +39,8 @@ timestamp, temperature =  get_temperature_from_sensor(DS18B20_ID_water)
 
 now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
-targett = math.sin(((now-8)/(3.14159*1.2)))*1+24
+#targett = math.sin(((now-8)/(3.14159*1.2)))*1+24
+targett = math.sin((now+10)/(math.pi*1.2))+24 
 
 
 # initialize a socket, think of it as a cable
