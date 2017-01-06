@@ -6,6 +6,7 @@ import re
 import os
 import math
 import datetime
+import urllib2
 # addressing information of target
 IPADDR = '192.168.0.8'
 PORTNUM = 8530
@@ -37,10 +38,18 @@ def get_temperature_from_sensor(sensor_name):
 
 timestamp, temperature =  get_temperature_from_sensor(DS18B20_ID_water)
 
+
+response = urllib2.urlopen('http://www.temperatur.nu/termo/uppsala/temp.txt')
+outsideT = float(response.read())
+
 now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
+targett = 0.5*math.sin((now+10)/(math.pi*1.2))+25.5+2/(1+math.exp(-0.25*(outsideT-10)))-1
+
+#now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
+
 #targett = math.sin(((now-8)/(3.14159*1.2)))*1+24
-targett = math.sin((now+10)/(math.pi*1.2))+24 
+#targett = 1.5*math.sin((now+10)/(math.pi*1.2))+25.5 
 
 
 # initialize a socket, think of it as a cable
