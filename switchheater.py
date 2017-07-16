@@ -7,6 +7,13 @@ import os
 import math
 import datetime
 import urllib2
+from nordpool import elspot
+from datetime import datetime, timedelta
+import pytz
+
+def mean(numbers):
+    return float(sum(numbers)) / max(len(numbers), 1)
+
 # addressing information of target
 IPADDR = '192.168.0.8'
 PORTNUM = 8530
@@ -39,16 +46,40 @@ def get_temperature_from_sensor(sensor_name):
 timestamp, temperature =  get_temperature_from_sensor(DS18B20_ID_water)
 
 
-response = urllib2.urlopen('http://www.temperatur.nu/termo/uppsala/temp.txt')
-responsetext = response.read()
-if(responsetext == "N/A"):
-    outsideT = 10
-else:
-    outsideT = float(responsetext)
+#response = urllib2.urlopen('http://www.temperatur.nu/termo/uppsala/temp.txt')
+#responsetext = response.read()
+#if(responsetext == "N/A"):
+#    outsideT = 10
+#else:
+#    outsideT = float(responsetext)
 
-now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
+prices = elspot.Prices(currency='SEK')
 
-targett = 1*math.sin((now+10)/(math.pi*1.2))+26+2/(1+math.exp(-0.25*(outsideT-10)))-1
+now = datetime.now(pytz.utc) - timedelta(days=31)
+q = prices.monthly(areas=['SE3'],end_date=now)
+l = []
+for i in q['areas']['SE3']['values']:
+    l.append(i['value'])
+
+average = mean(l[1:12])
+
+now = datetime.now(pytz.utc)
+prices = elspot.Prices(currency='SEK')
+p = prices.hourly(areas=['SE3'],end_date=now)
+for i in p['areas']['SE3']['values']:
+    if((i['start'] <= now) & (i['end'] > now)):
+        price = i['value']
+
+pricediff = average - price
+
+#now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
+
+#targett = 1*math.sin((now+10)/(math.pi*1.2))+26+2/(1+math.exp(-0.25*(outsideT-10)))-1
+
+targett = 26+2/(1+math.exp(-0.05*pricediff))
+print(targett)
+print(pricediff)
+print(2/(1+math.exp(-0.05*pricediff)))
 
 #now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
