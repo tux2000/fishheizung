@@ -40,11 +40,15 @@ timestamp, temperature =  get_temperature_from_sensor(DS18B20_ID_water)
 
 
 response = urllib2.urlopen('http://www.temperatur.nu/termo/uppsala/temp.txt')
-outsideT = float(response.read())
+responsetext = response.read()
+if(responsetext == "N/A"):
+    outsideT = 10
+else:
+    outsideT = float(responsetext)
 
 now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
-targett = 0.5*math.sin((now+10)/(math.pi*1.2))+25.5+2/(1+math.exp(-0.25*(outsideT-10)))-1
+targett = 1*math.sin((now+10)/(math.pi*1.2))+26+2/(1+math.exp(-0.25*(outsideT-10)))-1
 
 #now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
