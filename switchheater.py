@@ -7,6 +7,7 @@ import os
 import math
 import datetime
 import urllib2
+import sys
 from nordpool import elspot
 from datetime import datetime, timedelta
 import pytz
@@ -77,9 +78,9 @@ pricediff = average - price
 #targett = 1*math.sin((now+10)/(math.pi*1.2))+26+2/(1+math.exp(-0.25*(outsideT-10)))-1
 
 targett = 26+2/(1+math.exp(-0.05*pricediff))
-print(targett)
-print(pricediff)
-print(2/(1+math.exp(-0.05*pricediff)))
+#print(targett)
+#print(pricediff)
+#print(2/(1+math.exp(-0.05*pricediff)))
 
 #now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
@@ -94,12 +95,15 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 # connect the socket, think of it as connecting the cable to the address location
 s.connect((IPADDR, PORTNUM))
 
-# send the command
-if(targett > temperature+0.3):
-    s.send(PACKETDATAON)
-
-if(targett < temperature-0.3):
-    s.send(PACKETDATAOFF)
+if(len(sys.argv) > 1):
+    if(sys.argv[1] == "-t"):
+        print(targett)
+else:
+    # send the command
+    if(targett > temperature+0.3):
+        s.send(PACKETDATAON)
+    if(targett < temperature-0.3):
+        s.send(PACKETDATAOFF)
 
 # close the socket
 s.close()
