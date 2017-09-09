@@ -64,7 +64,9 @@ for i in q['areas']['SE3']['values']:
 
 average = mean(l[1:12])
 
-now = datetime.now(pytz.utc)
+#now = datetime.now(pytz.utc)
+now = datetime.now(pytz.timezone('Europe/Stockholm'))
+#now = datetime.today()
 prices = elspot.Prices(currency='SEK')
 p = prices.hourly(areas=['SE3'],end_date=now)
 for i in p['areas']['SE3']['values']:
@@ -77,7 +79,7 @@ pricediff = average - price
 
 #targett = 1*math.sin((now+10)/(math.pi*1.2))+26+2/(1+math.exp(-0.25*(outsideT-10)))-1
 
-targett = 26+2/(1+math.exp(-0.05*pricediff))
+targett = 26+2/(1+math.exp(-0.04*pricediff))
 #print(targett)
 #print(pricediff)
 #print(2/(1+math.exp(-0.05*pricediff)))
@@ -98,6 +100,17 @@ s.connect((IPADDR, PORTNUM))
 if(len(sys.argv) > 1):
     if(sys.argv[1] == "-t"):
         print(targett)
+    if(sys.argv[1] == "-v"):
+        print("Average: "+str(average))
+        print("Now: "+str(price))
+        print("Target T: "+str(targett))
+        print("Real T: "+str(temperature))
+    if(sys.argv[1] == "off"):
+        print("Switch OFF")
+        s.send(PACKETDATAOFF)
+    if(sys.argv[1] == "on"):
+        print("Switch ON")
+        s.send(PACKETDATAON)
 else:
     # send the command
     if(targett > temperature+0.3):
