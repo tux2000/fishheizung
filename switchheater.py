@@ -74,12 +74,17 @@ for i in p['areas']['SE3']['values']:
         price = i['value']
 
 pricediff = average - price
+priceratio = price/average
 
 #now = datetime.datetime.now().minute/60.0 + datetime.datetime.now().hour
 
 #targett = 1*math.sin((now+10)/(math.pi*1.2))+26+2/(1+math.exp(-0.25*(outsideT-10)))-1
 
-targett = 26+2/(1+math.exp(-0.04*pricediff))
+timeinday = datetime.now().minute/60.0 + datetime.now().hour
+
+targett = 1*math.sin((timeinday+10)/(math.pi*1.2))+26-2/(1+math.exp(-15*(math.log(priceratio,10))))+1
+
+#targett = 26+2/(1+math.exp(-0.04*pricediff))
 #print(targett)
 #print(pricediff)
 #print(2/(1+math.exp(-0.05*pricediff)))
@@ -103,6 +108,8 @@ if(len(sys.argv) > 1):
     if(sys.argv[1] == "-v"):
         print("Average: "+str(average))
         print("Now: "+str(price))
+        print("ratio: "+str(priceratio))        
+        print("log2(ratio): "+str(math.log(priceratio,2)))
         print("Target T: "+str(targett))
         print("Real T: "+str(temperature))
     if(sys.argv[1] == "off"):
